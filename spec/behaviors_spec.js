@@ -139,13 +139,13 @@ Screw.Unit(function() {
         });
       });
 
-      describe("A describe block with exceptions", function() {
+      describe("A describe block", function() {
         var after_invoked = false;
         after(function() {
           after_invoked = true;
         });
         
-        describe("an exception in a test", function() {
+        describe("with an exception in an example", function() {
           it("fails because it throws an exception", function() {
             throw('an exception');
           });
