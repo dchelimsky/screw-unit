@@ -1,3 +1,93 @@
+# Skipping Tests:
+
+* Skipped has a separate status counter at the top of the page, a new display color, and a reason can be printed to the page.
+* At any time within an test, you can make it show as skipped.  The test will cease to run at that point.  It can no longer pass or fail.
+* If you want to skip multiple tests, the before can do the skip.
+
+Examples:
+
+          it('should be skipped if the browser is IE', function(me){
+            if(this_browser_is_IE){
+              skip(me).because('IE doesn't have some function I am testing, and failed tests make me curl up on the floor and cry');
+            }
+          })
+          
+          describe('', function(){
+           before(function(me){
+             if(this_browser_is_IE){
+               skip(me).because('IE doesn't have some function I am testing, and failed tests make me curl up on the floor and cry');
+             }
+           });
+           
+           it('will never run at all', function(){
+             alert('you won't see this');
+           }); 
+           
+           it('will never _ever_ run at all', function(){
+             alert('you won't see this... ever!');
+           }); 
+           
+          })
+
+
+# Asynchronous testing:
+
+* A jQuery object representing the current test's dom element is now passed to "it" functions
+* Asynchronous testing functions are tracked and displayed with overall status, which updates as tests complete
+* Nested asynchronous testing
+
+Examples:
+        it('tests something after 3 seconds', function(me){
+          var x = false;
+          setTimeout(some_magic_function, 1000);
+          using(me).wait(3).and_then(function(){
+            expect(x).to(be_true);
+          });
+        })
+
+        it('tests something after 3 seconds, and something else 3 seconds after that', function(me){
+          var x = false;
+          setTimeout(some_magic_function, 1000);
+          using(me).wait(3).and_then(function(){
+            expect(x).to(be_true);
+            setTimeout(some_other_magic_function, 1000);
+            using(me).wait(3).and_then(function(){
+              expect(x).to(be_false);
+            });
+          });
+        })
+
+
+# Mocking
+
+* Mock out objects (and have them restored at the next test)
+* insert DOM mocks for each test
+* Mock out Prototype.js AJAX calls using a simple interface
+* JSDoc Toolkit docs (in /mock_docs/index.html)
+
+Docs online at:  [http://toppingdesign.com/mock_docs/](http://toppingdesign.com/mock_docs/)
+    
+Examples:
+        // DOM mocking
+        TH.insertDomMock("some_mock"); // will insert dom_mocks/some_mock.html into <div id="dom_test"></div>
+        
+        // Object mocking
+        var someObj = {
+            foo: function () { return 'bar' }
+        };
+        someObj.foo() == 'bar';
+        TH.Mock.Obj("someObj", {
+            foo: function () { return 'somethingElse' }
+        });
+        someObj.foo() == 'somethingElse'; // BUT!  Only for this test the next test will have a normal someObj;
+        
+        // Ajax mocking (Prototype.js only)
+        TH.Ajax.mock("/a_url", "someText", 200);
+        var ajx = new Ajax.Request("/a_url", {
+            onComplete: function (resp) { response = resp }
+        });
+        expect(response.responseText).to(equal, "someText");
+
 Screw.Unit is a Behavior-Driven Testing Framework for Javascript. It features nested describes. Its goals are to provide:
 
 * a DSL for elegant, readable, organized specs;

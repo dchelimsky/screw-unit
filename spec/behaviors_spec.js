@@ -5,6 +5,23 @@ Screw.Unit(function() {
   
   describe('Behaviors', function() {
     describe('#run', function() {
+      describe("A describe block with exceptions", function() {
+        var after_invoked = false;
+        after(function() {
+          after_invoked = true;
+        });
+        
+        describe("an exception in a test", function() {
+          it("fails because it throws an exception.  This is the only test that should fail", function() {
+            throw('an exception');
+          });
+          
+          it("invokes [after]s even if the previous [it] raised an exception", function() {
+            expect(after_invoked).to(equal, true);
+          });
+        });
+      });
+      
       describe("a simple [describe]", function() {
         it("invokes the global [before] before an [it]", function() {
           expect(global_before_invoked).to(equal, true);
